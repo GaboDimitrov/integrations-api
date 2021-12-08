@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "app_connector")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = { "created_at", "updated_at" }, allowGetters = true)
+@JsonIgnoreProperties(value = {"created_at", "updated_at"}, allowGetters = true)
 public class AppConnector {
 
     @Id
@@ -37,7 +37,8 @@ public class AppConnector {
     @LastModifiedDate
     private Date updated_at;
 
-    public AppConnector() {}
+    public AppConnector() {
+    }
 
     public AppConnector(String name, String description) {
         this.name = name;
@@ -47,10 +48,6 @@ public class AppConnector {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
@@ -65,12 +62,16 @@ public class AppConnector {
         return name;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Boolean getIsActive() {
         return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public Date getCreated_at() {
