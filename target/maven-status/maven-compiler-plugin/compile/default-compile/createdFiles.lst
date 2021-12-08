@@ -1,0 +1,4 @@
+com/integrationsapi/acessdatamysql/MainController.class
+com/integrationsapi/acessdatamysql/AppConnector.class
+com/integrationsapi/acessdatamysql/IntegrationsAPI.class
+com/integrationsapi/acessdatamysql/AppConnectorRepository.class
