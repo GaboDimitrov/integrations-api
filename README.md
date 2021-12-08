@@ -26,4 +26,4 @@ Once you have the above installed, run the following command:
 The application will be served on `http://localhost:8080`
 
 ## Testing
-The application have unit tests, but if you want to play around with it, here is a postman collection
+The application have unit tests, but if you want to play around with it, there is a postman collection in the repository called `Integrations-api.postman_collection.json`, that can be imported for your convenience.
