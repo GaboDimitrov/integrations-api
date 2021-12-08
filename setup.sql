@@ -1,8 +1,8 @@
 
 CREATE TABLE IF NOT EXISTS app_connector (
     id INT NOT NULL AUTO_INCREMENT,
-    name varchar(100) NOT NULL,
-    description varchar(500) NOT NULL,
+    name varchar(100) CHARACTER SET utf8 NOT NULL,
+    description varchar(500) CHARACTER SET utf8,
     is_active boolean default 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
