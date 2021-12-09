@@ -31,25 +31,25 @@ public class AppConnectorControllerTest {
     @Test
     public void shouldGetEntityIfIdIsProvided() throws Exception {
         given(appConnectorRepository.findById(anyInt())).willReturn(Optional.of(new AppConnector("Shopify", "Description")));
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/appConnectors/{id}", 1))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("Shopify"))
                 .andExpect(jsonPath("description").value("Description"));
     }
 
     @Test
-    public void ShouldReceiveNotFoundIfEntityIsNotFound() throws Exception {
+    public void shouldReceiveNotFoundIfEntityIsNotFound() throws Exception {
         given(appConnectorRepository.findById(anyInt())).willThrow(new AppConnectorNotFoundException());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/appConnectors/{id}", 999))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors/{id}", 999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void whenAddNewEntity_weShouldSeeOkStatusAndRetrieveObject() throws Exception {
+    public void shouldAddNewEntityAndReceiveIt() throws Exception {
         AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
         given(appConnectorRepository.save(mockAppConnector)).willReturn(mockAppConnector);
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/connectors")
                         .content(asJsonString(mockAppConnector))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -60,7 +60,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldThrowErrorIfRequestBodyIsNotCorrect() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/connectors")
                         .content("")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -70,7 +70,7 @@ public class AppConnectorControllerTest {
     @Test
     public void shouldReceiveEmptyArrayIfThereAreNoEntities() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/appConnectors/"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -80,7 +80,7 @@ public class AppConnectorControllerTest {
         AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
         given(appConnectorRepository.findAll()).willReturn(asList(mockAppConnector));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/appConnectors/"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Shopify"));
     }
@@ -89,7 +89,7 @@ public class AppConnectorControllerTest {
     public void shouldReceiveNotFoundIfIdIsMissingOnPutRequest() throws Exception {
         AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.empty());
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/appConnectors/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/connectors/{id}", 1)
                         .content(asJsonString(mockAppConnector))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ public class AppConnectorControllerTest {
         AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated");
         AppConnector updatedAppConnectorMock = new AppConnector("New", "The updated app");
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/appConnectors/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/connectors/{id}", 1)
                         .content(asJsonString(updatedAppConnectorMock))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -114,7 +114,7 @@ public class AppConnectorControllerTest {
     public void shouldDeleteAppConnectorIfAvailable() throws Exception {
         AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated");
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/appConnectors/{id}", 1))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/connectors/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().string("App connector has been deleted successfully."));
     }
@@ -123,7 +123,7 @@ public class AppConnectorControllerTest {
     public void shouldUpdateOnlyPassedFields() throws Exception {
         AppConnector mockAppConnector = new AppConnector("Shopify", "No.1 Ecommerce Platform for All Businesses.");
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/appConnectors/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/connectors/{id}", 1)
                         .content(" {\"name\": \"Yotpo\" }")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

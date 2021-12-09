@@ -17,7 +17,7 @@ public class AppConnectorController {
     @Autowired
     private AppConnectorRepository appConnectorRepository;
 
-    @PostMapping(path = "/add")
+    @PostMapping(path = "/connectors")
     public @ResponseBody
     ResponseEntity<AppConnector> addNewAppConnector(@RequestBody AppConnector appConnector) {
 
@@ -25,19 +25,20 @@ public class AppConnectorController {
         return new ResponseEntity<AppConnector>(appConnector, HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "/appConnectors")
+    @GetMapping(path = "/connectors")
     public @ResponseBody
     Iterable<AppConnector> getAllAppConnectors() {
         return appConnectorRepository.findAll();
     }
 
-    @GetMapping(path = "/appConnectors/{id}")
+    @GetMapping(path = "/connectors/{id}")
     public @ResponseBody
-    AppConnector getAppConnectorById(@PathVariable(value = "id") Integer id) {
-        return appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
+    ResponseEntity<AppConnector> getAppConnectorById(@PathVariable(value = "id") Integer id) {
+         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
+        return ResponseEntity.ok().body(appConnector);
     }
 
-    @PutMapping(path = "/appConnectors/{id}")
+    @PutMapping(path = "/connectors/{id}")
     public @ResponseBody
     ResponseEntity<AppConnector> getAppConnectorById(@PathVariable(value = "id") Integer id, @RequestBody AppConnector newAppConnector) {
         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
@@ -51,7 +52,7 @@ public class AppConnectorController {
     }
 
 
-    @PatchMapping(path = "/appConnectors/{id}")
+    @PatchMapping(path = "/connectors/{id}")
     public ResponseEntity<AppConnector> updateCustomer(@PathVariable Integer id, @RequestBody Map<Object, Object> fields) {
         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
 
@@ -62,10 +63,10 @@ public class AppConnectorController {
         });
 
         appConnectorRepository.save(appConnector);
-        return new ResponseEntity<AppConnector>(appConnector, HttpStatus.OK);
+        return ResponseEntity.ok().body(appConnector);
     }
 
-    @DeleteMapping("/appConnectors/{id}")
+    @DeleteMapping("/connectors/{id}")
     public @ResponseBody
     ResponseEntity<String> deleteAppConnector(@PathVariable(value = "id") Integer id) {
         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);

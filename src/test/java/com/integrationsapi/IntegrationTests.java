@@ -31,19 +31,6 @@ public class IntegrationTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        @Override
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues values = TestPropertyValues.of(
-                    "spring.datasource.url=" + mySQLContainer.getJdbcUrl(),
-                    "spring.datasource.password=" + mySQLContainer.getPassword(),
-                    "spring.datasource.username=" + mySQLContainer.getUsername()
-            );
-            values.applyTo(configurableApplicationContext);
-        }
-    }
-
     @Before
     public void setup() {
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
@@ -55,7 +42,7 @@ public class IntegrationTests {
 
     @Test
     public void shouldGetEntityById() throws Exception {
-        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/appConnectors/1", AppConnector.class);
+        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/connectors/1", AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Shopify");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(1);
@@ -64,20 +51,20 @@ public class IntegrationTests {
 
     @Test
     public void shouldReturnNotFoundIfEntityWithIdDoesNotExists() throws Exception {
-        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/appConnectors/1000", AppConnector.class);
+        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/connectors/1000", AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void shouldGetAllEntities() throws Exception {
-        ResponseEntity<AppConnector[]> response = restTemplate.getForEntity("/api/appConnectors", AppConnector[].class);
+        ResponseEntity<AppConnector[]> response = restTemplate.getForEntity("/api/connectors", AppConnector[].class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().length).isEqualTo(5);
     }
 
     @Test
     public void shouldAddNewEntity() throws Exception {
-        ResponseEntity<AppConnector> response = restTemplate.postForEntity("/api/add", new AppConnector("Yotpo", "Lorem ipsum"), AppConnector.class);
+        ResponseEntity<AppConnector> response = restTemplate.postForEntity("/api/connectors", new AppConnector("Yotpo", "Lorem ipsum"), AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Yotpo");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(6);
@@ -86,9 +73,9 @@ public class IntegrationTests {
 
     @Test
     public void shouldUpdateWholeEntityWithPutRequest() throws Exception {
-        AppConnector newAppConnector =  new AppConnector("Yotpo", "Lorem ipsum");
-        restTemplate.put("/api/appConnectors/4", newAppConnector, AppConnector.class);
-        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/appConnectors/4", AppConnector.class);
+        AppConnector newAppConnector = new AppConnector("Yotpo", "Lorem ipsum");
+        restTemplate.put("/api/connectors/4", newAppConnector, AppConnector.class);
+        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/connectors/4", AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Yotpo");
         Assertions.assertThat(response.getBody().getDescription()).isEqualTo("Lorem ipsum");
@@ -100,13 +87,11 @@ public class IntegrationTests {
     public void shouldUpdateOnlySentFieldsWithPatchRequest() throws Exception {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("Name", "Adidas");
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>("{\"name\": \"Adidas\", \"isActive\": false}", headers);
 
-        ResponseEntity<AppConnector> response = restTemplate.exchange("/api/appConnectors/2", HttpMethod.PATCH, entity, AppConnector.class);
-
+        ResponseEntity<AppConnector> response = restTemplate.exchange("/api/connectors/2", HttpMethod.PATCH, entity, AppConnector.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Adidas");
@@ -115,8 +100,17 @@ public class IntegrationTests {
 
     @Test
     public void shouldDeleteEntity() throws Exception {
-        restTemplate.delete("/api/appConnectors/5");
-        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/appConnectors/5", AppConnector.class);
+        restTemplate.delete("/api/connectors/5");
+        ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/connectors/5", AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues values = TestPropertyValues.of("spring.datasource.url=" + mySQLContainer.getJdbcUrl(), "spring.datasource.password=" + mySQLContainer.getPassword(), "spring.datasource.username=" + mySQLContainer.getUsername());
+            values.applyTo(configurableApplicationContext);
+        }
     }
 }
