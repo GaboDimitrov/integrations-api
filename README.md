@@ -19,7 +19,7 @@ In order to run the project, you need to have docker installed. You can find out
 
 ## Getting started
 Once you have the above installed, run the following command:
-`docker-compose --build`. This will start two docker containers:
+`docker-compose up`. This will start two docker containers:
 1. MySql database: The database will seed some data to play with
 2. Integrations-API: Spring Boot REST API.
 
