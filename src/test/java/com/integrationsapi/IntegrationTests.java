@@ -64,7 +64,7 @@ public class IntegrationTests {
 
     @Test
     public void shouldAddNewEntity() throws Exception {
-        ResponseEntity<AppConnector> response = restTemplate.postForEntity("/api/connectors", new AppConnector("Yotpo", "Lorem ipsum"), AppConnector.class);
+        ResponseEntity<AppConnector> response = restTemplate.postForEntity("/api/connectors", new AppConnector("Yotpo", "Lorem ipsum", false), AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Yotpo");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(6);
@@ -73,7 +73,7 @@ public class IntegrationTests {
 
     @Test
     public void shouldUpdateWholeEntityWithPutRequest() throws Exception {
-        AppConnector newAppConnector = new AppConnector("Yotpo", "Lorem ipsum");
+        AppConnector newAppConnector = new AppConnector("Yotpo", "Lorem ipsum", false);
         restTemplate.put("/api/connectors/4", newAppConnector, AppConnector.class);
         ResponseEntity<AppConnector> response = restTemplate.getForEntity("/api/connectors/4", AppConnector.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

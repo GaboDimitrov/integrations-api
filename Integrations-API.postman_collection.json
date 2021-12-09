@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Add new App connector",
+			"name": "Add new connector",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -79,7 +79,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": 1,\n    \"name\": \"test-name\",\n    \"description\": \"desc\",\n    \"isActive\": true\n}",
+					"raw": "{\n    \"name\": \"test-name\",\n    \"description\": \"desc\",\n    \"isActive\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -96,23 +96,6 @@
 						"api",
 						"connectors",
 						"2"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "some-other-name",
-							"disabled": true
-						},
-						{
-							"key": "isActive",
-							"value": "true",
-							"disabled": true
-						},
-						{
-							"key": "description",
-							"value": null,
-							"disabled": true
-						}
 					]
 				}
 			},
@@ -131,7 +114,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": " {\n     \"name\": \"Yotpo\"\n }",
+					"raw": " {\n     \"name\": \"Yotpo\",\n     \"description\": \"Lorem ipsum\"\n }",
 					"options": {
 						"raw": {
 							"language": "json"

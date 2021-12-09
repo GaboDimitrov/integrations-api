@@ -40,10 +40,10 @@ public class AppConnector {
     public AppConnector() {
     }
 
-    public AppConnector(String name, String description) {
+    public AppConnector(String name, String description, Boolean isActive) {
         this.name = name;
         this.description = description;
-        this.isActive = false;
+        this.isActive = isActive;
     }
 
     public Integer getId() {

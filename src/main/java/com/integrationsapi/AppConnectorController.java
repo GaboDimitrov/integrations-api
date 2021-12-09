@@ -20,6 +20,9 @@ public class AppConnectorController {
     @PostMapping(path = "/connectors")
     public @ResponseBody
     ResponseEntity<AppConnector> addNewAppConnector(@RequestBody AppConnector appConnector) {
+        if (appConnector.getName().isEmpty()) {
+            throw new ParameterMissingOrEmptyException();
+        }
 
         appConnectorRepository.save(appConnector);
         return new ResponseEntity<AppConnector>(appConnector, HttpStatus.CREATED);
@@ -41,6 +44,10 @@ public class AppConnectorController {
     @PutMapping(path = "/connectors/{id}")
     public @ResponseBody
     ResponseEntity<AppConnector> getAppConnectorById(@PathVariable(value = "id") Integer id, @RequestBody AppConnector newAppConnector) {
+        if (newAppConnector.getName().isEmpty()) {
+            throw new ParameterMissingOrEmptyException();
+        }
+
         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
 
         appConnector.setName(newAppConnector.getName());
@@ -54,6 +61,11 @@ public class AppConnectorController {
 
     @PatchMapping(path = "/connectors/{id}")
     public ResponseEntity<AppConnector> updateCustomer(@PathVariable Integer id, @RequestBody Map<Object, Object> fields) {
+
+        if (!fields.containsKey("name") || fields.get("name").toString().isEmpty()) {
+            throw new ParameterMissingOrEmptyException();
+        }
+
         AppConnector appConnector = appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
 
         fields.forEach((key, value) -> {
@@ -77,6 +89,11 @@ public class AppConnectorController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private void appConnectorNotFoundHandler(AppConnectorNotFoundException ex) {
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private void parameterMissing(ParameterMissingOrEmptyException ex) {
     }
 
 }

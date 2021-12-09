@@ -30,7 +30,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldGetEntityIfIdIsProvided() throws Exception {
-        given(appConnectorRepository.findById(anyInt())).willReturn(Optional.of(new AppConnector("Shopify", "Description")));
+        given(appConnectorRepository.findById(anyInt())).willReturn(Optional.of(new AppConnector("Shopify", "Description", true)));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("Shopify"))
@@ -47,7 +47,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldAddNewEntityAndReceiveIt() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
+        AppConnector mockAppConnector = new AppConnector("Shopify", "Description", true);
         given(appConnectorRepository.save(mockAppConnector)).willReturn(mockAppConnector);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/connectors")
                         .content(asJsonString(mockAppConnector))
@@ -56,6 +56,17 @@ public class AppConnectorControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value("Shopify"))
                 .andExpect(jsonPath("description").value("Description"));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfNameISEmpty() throws Exception {
+        AppConnector mockAppConnector = new AppConnector("Shopify", "Description", true);
+        given(appConnectorRepository.save(mockAppConnector)).willReturn(mockAppConnector);
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/connectors")
+                        .content("{\"name\": \"\", \"description\": \"Lorem ipsum\"}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -77,7 +88,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldReceiveArrayWithEntitiesIfThereAreAny() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
+        AppConnector mockAppConnector = new AppConnector("Shopify", "Description", false);
         given(appConnectorRepository.findAll()).willReturn(asList(mockAppConnector));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/connectors"))
@@ -87,7 +98,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldReceiveNotFoundIfIdIsMissingOnPutRequest() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Shopify", "Description");
+        AppConnector mockAppConnector = new AppConnector("Shopify", "Description", true);
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.put("/api/connectors/{id}", 1)
                         .content(asJsonString(mockAppConnector))
@@ -98,8 +109,8 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldUpdateTheWholeObjectWithPutRequest() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated");
-        AppConnector updatedAppConnectorMock = new AppConnector("New", "The updated app");
+        AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated", false);
+        AppConnector updatedAppConnectorMock = new AppConnector("New", "The updated app", true);
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
         mockMvc.perform(MockMvcRequestBuilders.put("/api/connectors/{id}", 1)
                         .content(asJsonString(updatedAppConnectorMock))
@@ -111,8 +122,18 @@ public class AppConnectorControllerTest {
     }
 
     @Test
+    public void shouldReceiveBadRequestIfNameIsEmptyOnPut() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/connectors/{id}", 1)
+                        .content("{\"name\": \"\", \"description\": \"Lorem ipsum\"}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     public void shouldDeleteAppConnectorIfAvailable() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated");
+        AppConnector mockAppConnector = new AppConnector("Old", "The App that will be updated", false);
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/connectors/{id}", 1))
                 .andExpect(status().isOk())
@@ -121,7 +142,7 @@ public class AppConnectorControllerTest {
 
     @Test
     public void shouldUpdateOnlyPassedFields() throws Exception {
-        AppConnector mockAppConnector = new AppConnector("Shopify", "No.1 Ecommerce Platform for All Businesses.");
+        AppConnector mockAppConnector = new AppConnector("Shopify", "No.1 Ecommerce Platform for All Businesses.", true);
         Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/connectors/{id}", 1)
                         .content(" {\"name\": \"Yotpo\" }")
@@ -129,6 +150,17 @@ public class AppConnectorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("Yotpo"));
+    }
+
+    @Test
+    public void shouldReceiveBadRequestIfNameIsEmptyForPatch() throws Exception {
+        AppConnector mockAppConnector = new AppConnector("Shopify", "No.1 Ecommerce Platform for All Businesses.", true);
+        Mockito.when(appConnectorRepository.findById(anyInt())).thenReturn(Optional.of(mockAppConnector));
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/connectors/{id}", 1)
+                        .content(" {\"name\": \"\" }")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     public static String asJsonString(final Object obj) {
