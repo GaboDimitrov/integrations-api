@@ -18,7 +18,6 @@ services:
       MYSQL_PASSWORD: admin_password
 
   integrations_api:
-    image: dimitgab/integrations-api
     build:
       context: ./
       dockerfile: Dockerfile

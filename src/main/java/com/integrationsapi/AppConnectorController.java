@@ -33,8 +33,8 @@ public class AppConnectorController {
 
     @GetMapping(path = "/appConnectors/{id}")
     public @ResponseBody
-    Optional<AppConnector> getAppConnectorById(@PathVariable(value = "id") Integer id) {
-        return appConnectorRepository.findById(id);
+    AppConnector getAppConnectorById(@PathVariable(value = "id") Integer id) {
+        return appConnectorRepository.findById(id).orElseThrow(AppConnectorNotFoundException::new);
     }
 
     @PutMapping(path = "/appConnectors/{id}")
